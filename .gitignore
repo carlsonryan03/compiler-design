@@ -1,0 +1,8 @@
+Cargo.lock
+Cargo.toml
+data/
+target/
+tmp/
+submission/
+grading/
+.DS_Store
