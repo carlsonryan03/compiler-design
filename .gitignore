@@ -2,8 +2,6 @@ Cargo.lock
 Cargo.toml
 data/
 target/
-tmp/
-submission/
 grading/
 .DS_Store
 *.tar
@@ -11,3 +9,9 @@ grading/
 *.zip
 project_LUTHOR/grading_luthor/
 project_LUTHOR/LUTHOR_submission/
+Cargo.toml
+data/
+target/
+project_ALPHABETENCODING/alphabetencoding/
+tmp/
+submission/
