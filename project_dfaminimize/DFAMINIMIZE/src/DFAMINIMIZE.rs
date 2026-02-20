@@ -25,7 +25,7 @@ fn get_tt_from_file(input_path: &str) -> Vec<StateRow> {
 
     if let Ok(lines) = read_lines(input_path) {
         for line in lines.map_while(Result::ok) {
-            let delimited_line: Vec<&str> = line.split(" ").collect();
+            let delimited_line: Vec<&str> = line.split_whitespace().collect();
 
             let mut current_row = StateRow {
                 accepting : false,
@@ -118,7 +118,7 @@ fn main() {
     // call minimize
     dfa.minimize();
 
-    // println!("Final DFA:\n{}", dfa.print()); // DEBUG
+    println!("Final DFA:\n{}", dfa.print()); // DEBUG
 
     if let Err(_) = output_file.write_all(dfa.print().as_bytes()) {
         eprintln!("ERROR: Could not write dfa to output file {}\n. Will print dfa to stderr: {}", output_path, dfa.print());

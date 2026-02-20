@@ -6,3 +6,8 @@ tmp/
 submission/
 grading/
 .DS_Store
+*.tar
+*.bz2
+*.zip
+project_LUTHOR/grading_luthor/
+project_LUTHOR/LUTHOR_submission/

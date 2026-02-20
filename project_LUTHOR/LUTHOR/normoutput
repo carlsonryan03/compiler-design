@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+test -d "${COMPGRADING}" || { echo >&2 "normoutput: COMPGRADING not in environment (should be set by grader.sh)"; exit 1; }
+test -x "${COMPGRADING}/aenorm" || { echo >&2 "normoutput: un-invokable COMPGRADING/aenorm"; exit 1; }
+while read termid tokenval linenum charnum ; do 
+	test -z "${termid}" && continue
+	echo ${termid} `"${COMPGRADING}/aenorm" "${tokenval}"` ${linenum} ${charnum} ;
+done
+exit 0
+
