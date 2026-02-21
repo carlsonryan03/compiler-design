@@ -1,0 +1,11 @@
+// For format details, see https://aka.ms/devcontainer.json.
+// containerUser:  for access as root `$ docker exec CONTAINERID -it /bin/bash`
+//                 (or `$ docker exec CONTAINERID -it runuser -l blaster`)
+// remoteUser:     will be the vscode built-in terminal user
+{
+    "name": "compdev",
+    "image": "khellmanatmines/comp-student:latest",
+	"remoteUser" : "blaster",
+	"containerUser" : "root",
+	"userEnvProbe" : "loginInteractiveShell",
+}
