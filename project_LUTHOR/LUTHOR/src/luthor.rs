@@ -1,14 +1,17 @@
 mod dfa;
+mod nfa;
 mod alphabetencoding;
 
 use std::env;
 use std::io::{self, BufRead, Write};
 use std::process;
 use std::collections::HashMap;
+use std::collections::HashSet;
 use std::fs::OpenOptions;
 use std::fs::File;
 use std::path::Path;
 use dfa::{DFA, StateRow};
+use nfa::{NFA, NfaStateRow};
 use std::fs;
 
 #[derive(Debug)]
@@ -27,6 +30,66 @@ where
         e
     })?;
     Ok(io::BufReader::new(file).lines())
+}
+
+// useless for luthor. Just for my own testing
+fn get_nfa_from_file(input_path: &str, alphabet: HashMap<u8, usize>) -> NFA {
+    let mut is_first_line = true;
+    let mut num_transitions = u32::MAX;
+    let mut states: Vec<NfaStateRow> = Vec::new();
+
+    if let Ok(lines) = read_lines(input_path) {
+        for line in lines.map_while(Result::ok) {
+            let delimited_line: Vec<&str> = line.split_whitespace().collect();
+            if delimited_line.is_empty() { continue; }
+
+            let mut current_row = NfaStateRow {
+                accepting: false,
+                state_id: u32::MAX,
+                transitions: Vec::new(),
+            };
+
+            if is_first_line {
+                num_transitions = delimited_line.len() as u32 - 2;
+                is_first_line = false;
+            } else if num_transitions != (delimited_line.len() as u32 - 2) {
+                eprintln!("ERROR: expected {} transitions, got {}", num_transitions, delimited_line.len() - 2);
+                process::exit(1);
+            }
+
+            if delimited_line[0] != "+" && delimited_line[0] != "-" {
+                eprintln!("ERROR: first symbol must be +/-, got {}", delimited_line[0]);
+                process::exit(1);
+            }
+            current_row.accepting = delimited_line[0] == "+";
+
+            current_row.state_id = delimited_line[1].parse::<u32>().unwrap_or_else(|_| {
+                eprintln!("ERROR: expected nonnegative integer, got {}", delimited_line[1]);
+                process::exit(1);
+            });
+
+            // Key difference: wrap each transition in a HashSet instead of Option
+            for i in 2..delimited_line.len() {
+                let mut set = HashSet::new();
+                if delimited_line[i] != "E" {
+                    let dest = delimited_line[i].parse::<u32>().unwrap_or_else(|_| {
+                        eprintln!("ERROR: expected E or integer, got {}", delimited_line[i]);
+                        process::exit(1);
+                    });
+                    set.insert(dest);
+                }
+                // if "E", set stays empty — equivalent to no transition
+                current_row.transitions.push(set);
+            }
+
+            states.push(current_row);
+        }
+    }
+
+    NFA::new(states, alphabet, 0).unwrap_or_else(|e| {
+        eprintln!("ERROR creating NFA: {}", e);
+        process::exit(1);
+    })
 }
 
 
